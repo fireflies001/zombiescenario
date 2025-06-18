@@ -27,39 +27,48 @@ function getNeighbors(areaName, geojson) {
 
     // return neighbors.map(n => n.properties.NAME_2);
     const lapu = geojson.features.find(f => f.properties.NAME_2 === "Lapu-Lapu City");
-    const cebu = geojson.features.find(f => f.properties.NAME_2 === "Cordoba");
-    console.log(lapu)
-    console.log(cebu)
-    const featureA = turf.simplify(lapu, { tolerance: 1, highQuality: false });
-    const featureB = turf.simplify(cebu, { tolerance: 1, highQuality: false });
-    console.log(featureA)
-    console.log(featureB)
-    const touches = turf.booleanTouches(featureA.geometry, featureB.geometry);
+    const cebu = geojson.features.find(f => f.properties.NAME_2 === "Mandaue City");
+    // console.log(lapu)
+    // console.log(cebu)
+    const featureA = turf.simplify(lapu, { tolerance: 0.002, highQuality: false });
+    const featureB = turf.simplify(cebu, { tolerance: 0.002, highQuality: false });
+    // console.log(featureA)
+    // console.log(featureB)
+    const touches = turf.booleanIntersects(featureA.geometry, featureB.geometry);
     console.log("Do they touch?", touches);
 
 }
 function drawArea(data){
+    // let area1 = data.features[0];
+    // const f1 = turf.simplify(area1, { tolerance: 0.001, highQuality: false });
+    // const layer = L.geoJSON(f1, {
+    //     style: {
+    //     color: 'green',
+    //     fillColor: 'white',
+    //     fillOpacity: 0
+    //     }
+    // }).addTo(map);
+    // layer.on('click', function () {
+    //     layer.setStyle({ fillColor: 'red', fillOpacity: 0.7 });
+    // });
+    // map.fitBounds(layer.getBounds()); // Zoom to fit
     data.features.forEach(feature => {
-
-    const layer = L.geoJSON(feature, {
-        style: {
-        color: 'green',
-        fillColor: 'white',
-        fillOpacity: 0
-        }
-    }).addTo(map);
-    layer.on('click', function () {
-        layer.setStyle({ fillColor: 'red', fillOpacity: 0.7 });
+        const layer = L.geoJSON(feature, {
+            style: {
+            color: 'green',
+            fillColor: 'white',
+            fillOpacity: 0
+            }
+        }).addTo(map);
+        layer.on('click', function () {
+            layer.setStyle({ fillColor: 'red', fillOpacity: 0.7 });
+        });
+        map.fitBounds(layer.getBounds()); // Zoom to fit
     });
-    map.fitBounds(layer.getBounds()); // Zoom to fit
-    });
+    console.log(data.features[0]);
 }
-// const neighbors = getNeighbors("Lapu-Lapu City", geodata);
-
 init().then(data =>{
     geodata = data;
     const neighbors = getNeighbors("Lapu-Lapu City", geodata);
-    console.log("Neighbors of Lapu-Lapu:", neighbors);
     drawArea(geodata);
 });
-// console.log(geodata);
